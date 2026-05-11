@@ -6,6 +6,14 @@
     <title>清羽飞扬 API 文档</title>
     <link rel="icon" href="/favicon.png">
     <script src="assets/tailwindcss.js"></script>
+    <script>
+        (function () {
+            const storedTheme = localStorage.getItem('qingyu-theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.dataset.theme = theme;
+        })();
+    </script>
     <style>
         @import url('https://jsd.liiiu.cn/gh/willow-god/Sharding-fonts/ZhuqueFangsong-Regular/result.min.css');
 
@@ -98,8 +106,377 @@
             color: #0f172a;
             font-weight: 600;
         }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 163, 184, 0.72) transparent;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0.42rem;
+            height: 0.42rem;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.66);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.78);
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        .footer-panel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-panel::before {
+            content: '';
+            position: absolute;
+            left: 1.5rem;
+            right: 1.5rem;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.46), transparent);
+        }
+
+        .footer-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.85rem;
+            text-align: center;
+        }
+
+        .footer-primary {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem 0.85rem;
+            line-height: 1.85;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .footer-note {
+            max-width: 42rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 640px) {
+            .theme-switcher {
+                right: 0.85rem;
+                bottom: 0.85rem;
+            }
+
+            .theme-toggle {
+                min-width: auto;
+                padding: 0 0.8rem;
+            }
+
+            .footer-panel {
+                padding-bottom: 5.25rem !important;
+            }
+
+            .footer-primary {
+                flex-direction: column;
+                gap: 0.35rem;
+            }
+        }
+
+        .theme-switcher {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 1200;
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            min-width: 8.4rem;
+            height: 2.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            background: rgba(255, 255, 255, 0.84);
+            color: #0f172a;
+            padding: 0 0.95rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: 0 22px 54px -30px rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            border-color: rgba(56, 189, 248, 0.48);
+            box-shadow: 0 26px 64px -34px rgba(2, 132, 199, 0.5);
+        }
+
+        .theme-toggle-icon {
+            display: inline-flex;
+            width: 1.65rem;
+            height: 1.65rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: white;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+
+        .theme-menu {
+            position: absolute;
+            right: 0;
+            bottom: calc(100% + 0.65rem);
+            width: 12.5rem;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(226, 232, 240, 0.92);
+            background: rgba(255, 255, 255, 0.92);
+            padding: 0.45rem;
+            box-shadow: 0 24px 70px -36px rgba(15, 23, 42, 0.52);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateY(0.35rem) scale(0.98);
+            pointer-events: none;
+            transition: opacity 0.16s ease, transform 0.16s ease;
+        }
+
+        .theme-switcher.is-open .theme-menu {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .theme-option {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 0.95rem;
+            padding: 0.75rem 0.8rem;
+            color: #475569;
+            font-size: 0.875rem;
+            font-weight: 700;
+            transition: background 0.16s ease, color 0.16s ease;
+        }
+
+        .theme-option:hover,
+        .theme-option.is-active {
+            background: rgba(240, 249, 255, 0.95);
+            color: #0f172a;
+        }
+
+        .theme-option.is-active::after {
+            content: '✓';
+            color: #0284c7;
+            font-size: 0.8rem;
+        }
+
+        html[data-theme="dark"] {
+            color-scheme: dark;
+        }
+
+        html[data-theme="dark"] body {
+            color: #dbeafe;
+            background:
+                radial-gradient(circle at top left, rgba(14, 165, 233, 0.18), transparent 32%),
+                radial-gradient(circle at right, rgba(99, 102, 241, 0.18), transparent 32%),
+                radial-gradient(circle at 50% 100%, rgba(20, 184, 166, 0.08), transparent 34%),
+                linear-gradient(180deg, #07111f 0%, #0b1220 48%, #0f172a 100%);
+        }
+
+        html[data-theme="dark"] * {
+            scrollbar-color: rgba(71, 85, 105, 0.82) transparent;
+        }
+
+        html[data-theme="dark"] ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0.78);
+        }
+
+        html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.86);
+        }
+
+        html[data-theme="dark"] .glass-panel {
+            background: rgba(15, 23, 42, 0.72);
+            border-color: rgba(71, 85, 105, 0.52);
+            box-shadow: 0 22px 58px -42px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        html[data-theme="dark"] .endpoint-card {
+            background: rgba(15, 23, 42, 0.86);
+            border-color: rgba(71, 85, 105, 0.58);
+            box-shadow: 0 24px 62px -44px rgba(0, 0, 0, 0.86), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        html[data-theme="dark"] .code-block {
+            background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            color: #dbeafe;
+            border: 1px solid rgba(71, 85, 105, 0.48);
+        }
+
+        html[data-theme="dark"] .nav-link { color: #94a3b8; }
+        html[data-theme="dark"] .nav-link:hover {
+            color: #e0f2fe;
+            background: rgba(30, 41, 59, 0.74);
+        }
+        html[data-theme="dark"] .nav-link-active {
+            color: #f8fafc;
+            background: rgba(14, 165, 233, 0.16);
+            box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.26);
+        }
+
+        html[data-theme="dark"] .method-badge {
+            background: rgba(6, 78, 59, 0.54);
+            color: #86efac;
+            box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.22);
+        }
+
+        html[data-theme="dark"] .doc-table {
+            border-color: rgba(71, 85, 105, 0.58);
+            background: rgba(15, 23, 42, 0.74);
+        }
+        html[data-theme="dark"] .doc-table th,
+        html[data-theme="dark"] .doc-table td {
+            border-bottom-color: rgba(71, 85, 105, 0.5);
+        }
+        html[data-theme="dark"] .doc-table th {
+            background: rgba(30, 41, 59, 0.86);
+            color: #cbd5e1;
+        }
+        html[data-theme="dark"] .inline-code {
+            background: rgba(30, 41, 59, 0.86);
+            color: #dbeafe;
+            box-shadow: inset 0 0 0 1px rgba(71, 85, 105, 0.46);
+        }
+
+        html[data-theme="dark"] aside nav a {
+            color: #cbd5e1 !important;
+        }
+        html[data-theme="dark"] aside nav a:hover {
+            color: #f8fafc !important;
+            background: rgba(30, 41, 59, 0.74) !important;
+        }
+
+        html[data-theme="dark"] .footer-panel::before {
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.34), transparent);
+        }
+
+        html[data-theme="dark"] .theme-toggle,
+        html[data-theme="dark"] .theme-menu {
+            border-color: rgba(71, 85, 105, 0.62);
+            background: rgba(15, 23, 42, 0.88);
+            color: #e2e8f0;
+            box-shadow: 0 24px 68px -34px rgba(0, 0, 0, 0.86), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        html[data-theme="dark"] .theme-option { color: #cbd5e1; }
+        html[data-theme="dark"] .theme-option:hover,
+        html[data-theme="dark"] .theme-option.is-active {
+            background: rgba(14, 165, 233, 0.15);
+            color: #f8fafc;
+        }
+        html[data-theme="dark"] .theme-option.is-active::after { color: #7dd3fc; }
+
+        html[data-theme="dark"] .text-slate-950,
+        html[data-theme="dark"] .text-slate-900,
+        html[data-theme="dark"] .text-slate-800 { color: #e5edf9 !important; }
+        html[data-theme="dark"] .text-slate-700,
+        html[data-theme="dark"] .text-slate-600 { color: #cbd5e1 !important; }
+        html[data-theme="dark"] .text-slate-500 { color: #94a3b8 !important; }
+        html[data-theme="dark"] .text-slate-400 { color: #7f8ea3 !important; }
+
+        html[data-theme="dark"] [class*="bg-white"],
+        html[data-theme="dark"] [class*="bg-slate-50"],
+        html[data-theme="dark"] [class*="bg-slate-100"] {
+            background-color: rgba(30, 41, 59, 0.72) !important;
+        }
+        html[data-theme="dark"] [class*="bg-sky-50"],
+        html[data-theme="dark"] [class*="bg-blue-50"],
+        html[data-theme="dark"] [class*="bg-cyan-50"] {
+            background-color: rgba(8, 47, 73, 0.56) !important;
+        }
+        html[data-theme="dark"] [class*="border-slate-"],
+        html[data-theme="dark"] [class*="border-white"],
+        html[data-theme="dark"] [class*="border-sky-"] {
+            border-color: rgba(71, 85, 105, 0.58) !important;
+        }
+        html[data-theme="dark"] [class*="ring-slate-"] {
+            --tw-ring-color: rgba(71, 85, 105, 0.58) !important;
+        }
+        html[data-theme="dark"] [class*="bg-gradient-to-br"] {
+            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(8, 47, 73, 0.58), rgba(30, 27, 75, 0.58)) !important;
+        }
     </style>
     <script>
+        function getCurrentTheme() {
+            return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        }
+
+        function syncThemeSwitcher() {
+            const theme = getCurrentTheme();
+            const label = document.getElementById('theme-toggle-label');
+            const icon = document.getElementById('theme-toggle-icon');
+            if (label) label.innerText = theme === 'dark' ? '暗色模式' : '浅色模式';
+            if (icon) icon.innerText = theme === 'dark' ? '☾' : '☀';
+            document.querySelectorAll('[data-theme-option]').forEach(option => {
+                option.classList.toggle('is-active', option.dataset.themeOption === theme);
+            });
+        }
+
+        function setTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('qingyu-theme', theme);
+            syncThemeSwitcher();
+        }
+
+        function initThemeSwitcher() {
+            const switcher = document.getElementById('theme-switcher');
+            const toggle = document.getElementById('theme-toggle');
+            if (!switcher || !toggle) return;
+            syncThemeSwitcher();
+            toggle.addEventListener('click', () => {
+                const isOpen = switcher.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+            document.querySelectorAll('[data-theme-option]').forEach(option => {
+                option.addEventListener('click', () => {
+                    setTheme(option.dataset.themeOption);
+                    switcher.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+            document.addEventListener('click', event => {
+                if (event.target.closest('#theme-switcher')) return;
+                switcher.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        }
+
         async function fetchConfig() {
             try {
                 const response = await fetch('/api/config');
@@ -123,7 +500,10 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', fetchConfig);
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchConfig();
+            initThemeSwitcher();
+        });
     </script>
 </head>
 <body class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -526,13 +906,25 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
             </main>
         </div>
 
-        <footer class="glass-panel flex flex-col items-center justify-center rounded-[24px] px-6 pt-8 pb-6 text-sm text-slate-500 space-y-3">
-            <div class="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-4">
-                <a id="icp-link" href="https://beian.miit.gov.cn/" target="_blank" class="hover:text-sky-600 transition-colors hidden">陕ICP备2024028531号</a>
-                <span>本页仅描述当前项目本地 API，并不直接替代腾讯云官方 API 文档。</span>
+        <footer class="glass-panel footer-panel rounded-[24px] px-6 pt-8 pb-6 text-sm text-slate-500">
+            <div class="footer-content">
+                <div class="footer-primary">
+                    <a id="icp-link" href="https://beian.miit.gov.cn/" target="_blank" class="footer-link hover:text-sky-600 transition-colors hidden">陕ICP备2024028531号</a>
+                    <span>本页仅描述当前项目本地 API，并不直接替代腾讯云官方 API 文档。</span>
+                </div>
+                <div class="footer-note text-xs text-slate-400">如需查看数据展示效果，请返回 <a href="/" class="font-medium text-sky-600 hover:text-sky-700">清羽飞扬流量分析首页</a>。</div>
             </div>
-            <div class="text-center text-xs text-slate-400">如需查看数据展示效果，请返回 <a href="/" class="font-medium text-sky-600 hover:text-sky-700">清羽飞扬流量分析首页</a>。</div>
         </footer>
+    </div>
+    <div class="theme-switcher" id="theme-switcher">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="theme-toggle-icon" id="theme-toggle-icon">☀</span>
+            <span id="theme-toggle-label">浅色模式</span>
+        </button>
+        <div class="theme-menu" role="menu" aria-label="切换主题">
+            <button type="button" class="theme-option" data-theme-option="light" role="menuitem">浅色模式</button>
+            <button type="button" class="theme-option" data-theme-option="dark" role="menuitem">暗色模式</button>
+        </div>
     </div>
 </body>
 </html>
