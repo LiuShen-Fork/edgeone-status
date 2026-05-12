@@ -1,177 +1,171 @@
-# 清羽飞扬流量分析
+<div align="center">
+  <img src="./favicon.png" alt="流量分析" width="110" height="110" />
+  <h1>流量分析</h1>
+  <p>一个简洁的 EdgeOne 站点流量看板。</p>
+</div>
 
-一个面向 Tencent Cloud EdgeOne 与 EdgeOne Pages 的轻量级站点数据面板。项目聚合流量、带宽、请求、性能、安全与 Pages 函数数据，并提供本地 API 文档，适合用于个人站点或轻量运维场景。
+## 项目介绍
 
-<p align="center">
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-111827?style=flat-square"></a>
-  <img alt="Runtime" src="https://img.shields.io/badge/runtime-Node.js-334155?style=flat-square">
-  <img alt="Deploy" src="https://img.shields.io/badge/deploy-EdgeOne%20Pages-0f172a?style=flat-square">
-</p>
+流量分析是一个面向 Tencent Cloud EdgeOne 的轻量级数据面板，用于集中查看站点流量、带宽、请求量、性能、安全以及 EdgeOne Pages 相关统计数据。
 
-## 预览
+项目将腾讯云密钥保存在服务端环境变量中，前端只请求本项目提供的 `/api/*` 接口，避免将敏感密钥暴露到浏览器侧。适合个人站点、博客、轻量运维面板或 EdgeOne Pages 项目监控场景。
 
-- 首页：站点数据总览、趋势图表、排行分析与筛选控件。
-- 文档页：当前项目本地接口说明与调用参数。
-- 主题：支持浅色 / 暗色模式，并会记住用户选择。
+## 目录
 
-## 特性
+- [项目介绍](#项目介绍)
+- [功能特性](#功能特性)
+- [基于什么开发](#基于什么开发)
+- [项目结构](#项目结构)
+- [快速开始](#快速开始)
+- [环境变量配置](#环境变量配置)
+- [权限建议](#权限建议)
+- [本地接口](#本地接口)
+- [部署说明](#部署说明)
+- [开源说明](#开源说明)
 
-### 数据总览
+## 功能特性
 
-- 展示总流量、请求流量、响应流量、带宽峰值与请求数。
-- 支持 1 小时、当天、昨天、7 天、31 天等常用时间范围。
-- 自动适配统计粒度，减少手动配置成本。
+- 数据总览：展示总流量、请求流量、响应流量、带宽峰值与请求数。
+- 趋势分析：支持按 1 小时、当天、昨天、7 天、31 天等范围查看数据变化。
+- 多维排行：支持域名、URL、状态码等维度的 TOP 数据统计。
+- 站点筛选：可查看全部站点，也可选择指定站点或子域名。
+- Pages 统计：支持查看 EdgeOne Pages 构建次数、云函数请求数与月度统计。
+- 本地文档：内置 `/docs.html`，便于查看接口说明与参数结构。
+- 界面体验：支持响应式布局、浅色 / 暗色模式与自定义站点信息。
+- 隐私保护：支持通过黑名单隐藏指定域名，避免展示不希望公开的数据。
 
-### 多维分析
+## 基于什么开发
 
-- 流量分析：总流量、请求流量、响应流量趋势。
-- 带宽分析：总带宽、请求带宽、响应带宽峰值。
-- 请求分析：请求数变化与热点分布。
-- 性能分析：L7 响应耗时趋势。
-- 安全分析：安全相关指标展示。
-- TOP 排行：域名、URL、状态码等维度排行。
+| 类型 | 使用内容 |
+| --- | --- |
+| 云服务 | Tencent Cloud EdgeOne、EdgeOne Pages |
+| 前端 | HTML、Tailwind CSS、ECharts |
+| 服务端 | Node.js、Express |
+| SDK | Tencent Cloud SDK for Node.js |
+| 环境变量 | dotenv |
+| 运行方式 | EdgeOne Pages Functions、本地 Node.js 环境 |
 
-### 站点筛选
-
-- 支持查看全部站点或指定站点。
-- 支持按子域名筛选数据。
-- 对 EdgeOne Pages 默认站点展示名做了更友好的显示处理。
-
-### 页面体验
-
-- 精致浅色风格与完整暗色模式。
-- 响应式布局，兼容桌面端与移动端。
-- 自定义下拉框、卡片、页脚与滚动条样式。
-- 内置 API 文档页，便于理解前端与服务端接口关系。
-
-## 页面结构
+## 项目结构
 
 ```text
-/
+.
 ├─ index.html                # 数据面板首页
 ├─ docs.html                 # 本地 API 文档页
+├─ favicon.png               # 站点图标
 ├─ assets/                   # 前端静态资源
-├─ node-functions/api/       # EdgeOne Pages Functions API
-├─ package.json              # Node.js 依赖
-└─ README.md
+├─ node-functions/api/       # EdgeOne Pages Functions 接口
+├─ package.json              # Node.js 依赖配置
+├─ .env.example              # 环境变量示例
+└─ README.md                 # 项目说明
 ```
 
 ## 快速开始
 
-### 1. 克隆项目
-
-```bash
-git clone https://github.com/MoForgt/edgeone-status.git
-cd edgeone-status
-```
-
-### 2. 安装依赖
+### 1. 安装依赖
 
 ```bash
 npm install
 ```
 
-如需使用 EdgeOne Pages 本地开发能力，请确保已安装并登录 EdgeOne CLI：
+### 2. 创建环境变量文件
+
+复制 `.env.example` 为 `.env`，并根据自己的腾讯云账号与站点信息修改配置。
+
+```bash
+cp .env.example .env
+```
+
+### 3. 启动本地开发
+
+如果使用 EdgeOne Pages 本地开发能力，请先安装并登录 EdgeOne CLI。
 
 ```bash
 npm install -g edgeone
 edgeone login
-```
-
-### 3. 配置密钥
-
-推荐使用环境变量：
-
-推荐本地调试时使用 `.env`：
-
-```bash
-SECRET_ID=你的腾讯云 SecretId
-SECRET_KEY=你的腾讯云 SecretKey
-BLACK_LIST=["xxx.example.com","xxx2.example.com"]
-```
-
-也可以直接参考仓库里的 `.env.example` 创建本地 `.env`。
-
-`BLACK_LIST` 用于隐藏和阻止请求指定域名的数据，支持 JSON 数组，或使用逗号/换行分隔多个域名。
-
-### 4. 启动开发服务
-
-```bash
 edgeone pages dev
 ```
 
-默认访问地址通常为：
+默认本地访问地址通常为：
 
 ```text
 http://localhost:8088
 ```
 
-## 环境变量
+## 环境变量配置
 
-| 变量 | 必填 | 说明 | 默认值 |
+`.env.example` 当前包含以下配置：
+
+```env
+SECRET_ID=your_tencentcloud_secret_id
+SECRET_KEY=your_tencentcloud_secret_key
+SITE_NAME=清羽飞扬流量分析
+SITE_ICON=/favicon.png
+ICP=陕ICP备2024028531号
+BLACK_LIST=["xxx.example.com","xxx2.example.com"]
+```
+
+| 变量 | 必填 | 示例 | 说明 |
 | --- | --- | --- | --- |
-| `SECRET_ID` | 是 | 腾讯云访问密钥 ID | - |
-| `SECRET_KEY` | 是 | 腾讯云访问密钥 Key | - |
-| `SITE_NAME` | 否 | 页面标题 / 站点名称 | `清羽飞扬流量分析` |
-| `SITE_ICON` | 否 | 页面图标地址 | `/favicon.png` |
-| `ICP` | 否 | 备案号 | `陕ICP备2024028531号` |
+| `SECRET_ID` | 是 | `your_tencentcloud_secret_id` | 腾讯云 API 访问密钥 SecretId，用于服务端请求 EdgeOne 接口。 |
+| `SECRET_KEY` | 是 | `your_tencentcloud_secret_key` | 腾讯云 API 访问密钥 SecretKey，请勿提交到公开仓库。 |
+| `SITE_NAME` | 否 | `清羽飞扬流量分析` | 页面标题和站点显示名称，可改成自己的面板名称。 |
+| `SITE_ICON` | 否 | `/favicon.png` | 页面图标地址，默认使用项目根目录下的 `favicon.png`。 |
+| `ICP` | 否 | `陕ICP备2024028531号` | 页脚展示的备案号，不需要展示时可留空。 |
+| `BLACK_LIST` | 否 | `["xxx.example.com","xxx2.example.com"]` | 域名黑名单，用于隐藏或过滤不希望展示的域名数据，建议使用 JSON 数组格式。 |
 
-## 权限要求
+### 配置建议
 
-腾讯云密钥建议只授予 EdgeOne 只读权限：
+- 本地开发时使用 `.env` 保存配置，不要将真实密钥提交到仓库。
+- 线上部署时建议在 EdgeOne Pages 的环境变量中配置 `SECRET_ID` 与 `SECRET_KEY`。
+- `BLACK_LIST` 适合隐藏测试域名、私有域名或不希望公开展示的域名。
+- `SITE_ICON` 可以继续使用 `/favicon.png`，也可以替换为自己的图片路径。
+
+## 权限建议
+
+腾讯云密钥建议使用独立子用户，并只授予 EdgeOne 只读权限，例如：
 
 ```text
 QcloudTEOReadOnlyaccess
 ```
 
-请避免使用主账号密钥或高权限密钥。推荐创建独立子用户，仅开启编程访问，并按需绑定最小权限策略。
+请避免使用主账号密钥或高权限密钥，降低密钥泄露后的风险。
 
-## 本地 API
+## 本地接口
 
-本项目的浏览器请求均发往本站 `/api/*`，腾讯云密钥只在服务端读取，不会暴露到前端。
+浏览器侧请求会统一发往本站 `/api/*`，由服务端读取环境变量并调用腾讯云接口。
 
-| 路径 | 说明 |
+| 接口 | 说明 |
 | --- | --- |
-| `/api/config` | 获取站点名称、图标与备案号配置 |
-| `/api/zones` | 获取 EdgeOne 站点列表 |
-| `/api/hosts` | 获取站点下的域名列表 |
-| `/api/traffic` | 查询流量、带宽、请求、性能、安全与 TOP 指标 |
-| `/api/pages/build-count` | 查询 Pages 构建次数 |
-| `/api/pages/cloud-function-requests` | 查询 Pages 云函数请求数据 |
-| `/api/pages/cloud-function-monthly-stats` | 查询 Pages 云函数月度统计 |
+| `/api/config` | 获取站点名称、图标、备案号等页面配置。 |
+| `/api/zones` | 获取 EdgeOne 站点列表。 |
+| `/api/hosts` | 获取指定站点下的域名列表。 |
+| `/api/traffic` | 查询流量、带宽、请求、性能、安全与 TOP 指标。 |
+| `/api/pages/build-count` | 查询 EdgeOne Pages 构建次数。 |
+| `/api/pages/cloud-function-requests` | 查询 Pages 云函数请求数据。 |
+| `/api/pages/cloud-function-monthly-stats` | 查询 Pages 云函数月度统计。 |
 
-更完整的参数、返回结构与错误说明，请访问部署后的 `/docs.html`。
+更详细的参数、返回结构与错误说明，请访问部署后的 `/docs.html`。
 
-## 部署
+## 部署说明
 
-### EdgeOne Pages
+### EdgeOne Pages 部署
 
-1. Fork 或导入本仓库。
-2. 在 EdgeOne Pages 中创建项目并连接仓库。
-3. 配置 `SECRET_ID`、`SECRET_KEY` 等环境变量。
-4. 部署后访问首页与 `/docs.html`。
+1. 将项目导入 EdgeOne Pages。
+2. 在项目设置中配置环境变量。
+3. 确认 `node-functions/api/` 能被 Pages Functions 正确识别。
+4. 部署完成后访问首页查看流量分析面板。
+5. 如需查看接口文档，可访问 `/docs.html`。
 
-### 注意事项
+### 常见检查项
 
-- 确认密钥具备 EdgeOne 只读权限。
-- 确认 Pages Functions 已正确识别 `node-functions/api/[[default]].js`。
-- 若接口返回未配置密钥，请检查项目根目录 `.env` 中的 `SECRET_ID` 与 `SECRET_KEY`。
-
-## 技术栈
-
-| 层级 | 技术 |
-| --- | --- |
-| 前端 | HTML、Tailwind CSS、ECharts |
-| 服务端 | Node.js、Express |
-| 云服务 | Tencent Cloud EdgeOne、EdgeOne Pages |
-| SDK | Tencent Cloud SDK for Node.js |
+- `SECRET_ID` 与 `SECRET_KEY` 是否已正确配置。
+- 腾讯云子用户是否拥有 EdgeOne 只读权限。
+- `BLACK_LIST` 是否为合法 JSON 数组格式。
+- `SITE_ICON` 指向的图标文件是否存在。
+- Pages Functions 是否成功部署。
 
 ## 开源说明
 
-本项目基于开源项目 [MoForgt/edgeone-status](https://github.com/MoForgt/edgeone-status) 构建，并遵循原项目许可协议。
+本项目基于原始项目 [MoForgt/edgeone-status](https://github.com/MoForgt/edgeone-status) 修改与完善。
 
-当前仓库使用 [AGPL-3.0](LICENSE) 许可证。若你修改并通过网络提供服务，请按照 AGPL-3.0 要求提供对应源代码。
-
-## 致谢
-
-感谢 EdgeOne、ECharts、Tailwind CSS 以及相关开源项目提供的基础能力。
+本项目遵循仓库内许可证文件声明的开源协议。若你修改并通过网络提供服务，请注意遵守对应许可证要求。

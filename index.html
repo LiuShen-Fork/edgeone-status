@@ -467,6 +467,34 @@
             font-size: 0.8rem;
         }
 
+        @media (max-width: 640px) {
+            .theme-switcher {
+                right: 0.85rem;
+                bottom: 0.85rem;
+            }
+
+            .theme-toggle {
+                width: 3.15rem;
+                min-width: 3.15rem;
+                height: 3.15rem;
+                justify-content: center;
+                padding: 0;
+            }
+
+            .theme-toggle #theme-toggle-label {
+                display: none;
+            }
+
+            .theme-toggle-icon {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            .theme-menu {
+                display: none;
+            }
+        }
+
         html[data-theme="dark"] {
             color-scheme: dark;
         }
@@ -1392,12 +1420,22 @@
             refreshChartsForTheme();
         }
 
+        function isNarrowScreen() {
+            return window.matchMedia('(max-width: 640px)').matches;
+        }
+
         function initThemeSwitcher() {
             const switcher = document.getElementById('theme-switcher');
             const toggle = document.getElementById('theme-toggle');
             if (!switcher || !toggle) return;
             syncThemeSwitcher();
             toggle.addEventListener('click', () => {
+                if (isNarrowScreen()) {
+                    setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+                    switcher.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    return;
+                }
                 const isOpen = switcher.classList.toggle('is-open');
                 toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });

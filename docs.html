@@ -17,12 +17,30 @@
     <style>
         @import url('https://jsd.liiiu.cn/gh/willow-god/Sharding-fonts/ZhuqueFangsong-Regular/result.min.css');
 
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
         body {
             font-family: "Zhuque Fangsong (technical preview)", "Noto Sans SC", sans-serif !important;
             background:
                 radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 30%),
                 radial-gradient(circle at right, rgba(99, 102, 241, 0.12), transparent 28%),
                 linear-gradient(180deg, #f8fbff 0%, #f8fafc 48%, #eef4ff 100%);
+        }
+
+        body * {
+            min-width: 0;
+        }
+
+        pre,
+        .inline-code,
+        .code-block,
+        .doc-table td,
+        .doc-table th {
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .glass-panel {
@@ -180,14 +198,35 @@
         }
 
         @media (max-width: 640px) {
-            .theme-switcher {
-                right: 0.85rem;
-                bottom: 0.85rem;
+            body {
+                padding: 0.75rem !important;
             }
 
-            .theme-toggle {
-                min-width: auto;
-                padding: 0 0.8rem;
+            .doc-table,
+            .doc-table thead,
+            .doc-table tbody,
+            .doc-table tr,
+            .doc-table th,
+            .doc-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .doc-table thead {
+                display: none;
+            }
+
+            .doc-table tr {
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .doc-table tr:last-child {
+                border-bottom: 0;
+            }
+
+            .doc-table td {
+                border-bottom: 0;
+                padding: 0.65rem 0.8rem;
             }
 
             .footer-panel {
@@ -293,6 +332,34 @@
             font-size: 0.8rem;
         }
 
+        @media (max-width: 640px) {
+            .theme-switcher {
+                right: 0.85rem;
+                bottom: 0.85rem;
+            }
+
+            .theme-toggle {
+                width: 3.15rem;
+                min-width: 3.15rem;
+                height: 3.15rem;
+                justify-content: center;
+                padding: 0;
+            }
+
+            .theme-toggle #theme-toggle-label {
+                display: none;
+            }
+
+            .theme-toggle-icon {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            .theme-menu {
+                display: none;
+            }
+        }
+
         html[data-theme="dark"] {
             color-scheme: dark;
         }
@@ -368,6 +435,9 @@
         html[data-theme="dark"] .doc-table th {
             background: rgba(30, 41, 59, 0.86);
             color: #cbd5e1;
+        }
+        html[data-theme="dark"] .doc-table tr {
+            border-bottom-color: rgba(71, 85, 105, 0.5);
         }
         html[data-theme="dark"] .inline-code {
             background: rgba(30, 41, 59, 0.86);
@@ -454,12 +524,22 @@
             syncThemeSwitcher();
         }
 
+        function isNarrowScreen() {
+            return window.matchMedia('(max-width: 640px)').matches;
+        }
+
         function initThemeSwitcher() {
             const switcher = document.getElementById('theme-switcher');
             const toggle = document.getElementById('theme-toggle');
             if (!switcher || !toggle) return;
             syncThemeSwitcher();
             toggle.addEventListener('click', () => {
+                if (isNarrowScreen()) {
+                    setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+                    switcher.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    return;
+                }
                 const isOpen = switcher.classList.toggle('is-open');
                 toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
@@ -585,8 +665,8 @@
                 </nav>
             </aside>
 
-            <main class="space-y-6">
-                <section id="quick-start" class="endpoint-card rounded-[24px] p-6">
+            <main class="min-w-0 space-y-6">
+                <section id="quick-start" class="endpoint-card rounded-[24px] p-4 sm:p-6">
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Quick Start</p>
@@ -595,7 +675,7 @@
                         </div>
                     </div>
                     <div class="mt-5 grid gap-4 lg:grid-cols-2">
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/zones
 GET /api/hosts?zoneId=zone-xxxx
 GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-05-11T23:59:59Z&zoneId=zone-xxxx&host=example.com</pre>
@@ -608,7 +688,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="auth" class="endpoint-card rounded-[24px] p-6">
+                <section id="auth" class="endpoint-card rounded-[24px] p-4 sm:p-6">
                     <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Auth & Time</p>
                     <h2 class="mt-2 text-2xl font-semibold text-slate-950">鉴权、时间与通用约定</h2>
                     <div class="mt-5 grid gap-4 lg:grid-cols-2">
@@ -630,7 +710,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="response-shapes" class="endpoint-card rounded-[24px] p-6">
+                <section id="response-shapes" class="endpoint-card rounded-[24px] p-4 sm:p-6">
                     <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Response Shapes</p>
                     <h2 class="mt-2 text-2xl font-semibold text-slate-950">返回结构怎么理解</h2>
                     <div class="mt-5 grid gap-4 lg:grid-cols-3">
@@ -649,8 +729,8 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="config" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="config" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/config</h3>
                             <p class="mt-2 text-sm text-slate-600">获取站点名称、图标和备案号等前端展示配置。</p>
@@ -664,7 +744,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             <p class="mt-4 font-medium text-slate-900">典型用途</p>
                             <p class="mt-2">首页和文档页启动时读取品牌信息，并更新标题、图标与备案号展示。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">{
   "siteName": "清羽飞扬流量分析",
   "siteIcon": "/favicon.png",
@@ -674,8 +754,8 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="zones" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="zones" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/zones</h3>
                             <p class="mt-2 text-sm text-slate-600">获取当前账号可访问的 Zone 列表，用于填充站点下拉框。</p>
@@ -688,14 +768,14 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             <p class="mt-2"><span class="font-medium text-slate-900">查询用途：</span>页面初始化时先读取站点列表，再决定后续的 Host 与指标查询目标。</p>
                             <p class="mt-2"><span class="font-medium text-slate-900">失败情况：</span>如果密钥缺失，会返回 500 与 error 字段。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/zones</pre>
                         </div>
                     </div>
                 </section>
 
-                <section id="hosts" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="hosts" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/hosts</h3>
                             <p class="mt-2 text-sm text-slate-600">根据选中的 Zone 推导可选域名列表，便于查看某个子域名的数据。</p>
@@ -711,7 +791,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             <p class="mt-3"><span class="font-medium text-slate-900">返回说明：</span>返回结构里常见 <span class="inline-code">Hosts</span> 数组，每项包含 Host 字段。</p>
                             <p class="mt-3"><span class="font-medium text-slate-900">前端额外处理：</span>首页会进一步过滤带有 <span class="inline-code">.edgeone.</span> 的默认域名。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/hosts?zoneId=zone-xxxx
 
 {
@@ -724,8 +804,8 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="traffic" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="traffic" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/traffic</h3>
                             <p class="mt-2 text-sm text-slate-600">核心数据接口。通过 metric 参数统一查询流量、带宽、请求数、性能、安全和 TOP 排行数据。</p>
@@ -744,7 +824,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             </ul>
                             <p class="mt-3"><span class="font-medium text-slate-900">分流逻辑：</span>服务端会根据 metric 自动选择腾讯云接口：时序 L7、源站拉取、TOP 排行、安全防护或 Edge Functions。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/traffic?metric=l7Flow_request&startTime=2026-05-11T00:00:00Z&endTime=2026-05-11T23:59:59Z&zoneId=zone-xxxx&host=www.example.com
 
 // 返回为腾讯云原始响应；前端会在浏览器侧转成图表需要的结构。</pre>
@@ -764,7 +844,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="metrics" class="endpoint-card rounded-[24px] p-6">
+                <section id="metrics" class="endpoint-card rounded-[24px] p-4 sm:p-6">
                     <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Metrics</p>
                     <h2 class="mt-2 text-2xl font-semibold text-slate-950">指标速查表</h2>
                     <div class="mt-5 grid gap-4 lg:grid-cols-2">
@@ -805,8 +885,8 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                     </div>
                 </section>
 
-                <section id="pages-build" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="pages-build" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/pages/build-count</h3>
                             <p class="mt-2 text-sm text-slate-600">查询 Pages 构建或部署使用情况。</p>
@@ -822,7 +902,7 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             <p class="mt-3"><span class="font-medium text-slate-900">内部调用：</span><span class="inline-code">DescribePagesResources</span>，Interface 为 <span class="inline-code">pages:DescribePagesDeploymentUsage</span>。</p>
                             <p class="mt-3"><span class="font-medium text-slate-900">返回说明：</span>如果响应中存在 Result 串，服务端会尝试额外解析为 <span class="inline-code">parsedResult</span> 字段。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/pages/build-count?zoneId=zone-xxxx
 
 {
@@ -834,8 +914,8 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                 </section>
 
 
-                <section id="pages-fn-requests" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="pages-fn-requests" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/pages/cloud-function-requests</h3>
                             <p class="mt-2 text-sm text-slate-600">查询 Pages 云函数请求量统计，适合看某段时间内函数调用表现。</p>
@@ -852,14 +932,14 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             </ul>
                             <p class="mt-3"><span class="font-medium text-slate-900">内部调用：</span><span class="inline-code">DescribePagesResources</span>，Interface 为 <span class="inline-code">pages:DescribePagesFunctionsRequestDataByZone</span>，默认 Interval 为 <span class="inline-code">hour</span>。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/pages/cloud-function-requests?zoneId=zone-xxxx&startTime=2026-05-01T00:00:00Z&endTime=2026-05-11T23:59:59Z</pre>
                         </div>
                     </div>
                 </section>
 
-                <section id="pages-fn-monthly" class="endpoint-card rounded-[24px] p-6">
-                    <div class="flex items-center justify-between gap-4">
+                <section id="pages-fn-monthly" class="endpoint-card rounded-[24px] p-4 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div>
                             <h3 class="text-xl font-semibold text-slate-950">/api/pages/cloud-function-monthly-stats</h3>
                             <p class="mt-2 text-sm text-slate-600">查询 Pages 云函数历史或月度统计数据。</p>
@@ -875,13 +955,13 @@ GET /api/traffic?metric=l7Flow_flux&startTime=2026-05-11T00:00:00Z&endTime=2026-
                             <p class="mt-3"><span class="font-medium text-slate-900">内部调用：</span><span class="inline-code">DescribePagesResources</span>，Interface 为 <span class="inline-code">pages:DescribeHistoryCloudFunctionStats</span>。</p>
                             <p class="mt-3"><span class="font-medium text-slate-900">适合场景：</span>查看更长周期的云函数用量、历史统计或用于扩展运营面板。</p>
                         </div>
-                        <div class="code-block rounded-2xl p-4 text-sm leading-7">
+                        <div class="code-block rounded-2xl p-3 text-xs leading-6 sm:p-4 sm:text-sm sm:leading-7">
                             <pre class="whitespace-pre-wrap">GET /api/pages/cloud-function-monthly-stats?zoneId=zone-xxxx</pre>
                         </div>
                     </div>
                 </section>
 
-                <section id="troubleshooting" class="endpoint-card rounded-[24px] p-6">
+                <section id="troubleshooting" class="endpoint-card rounded-[24px] p-4 sm:p-6">
                     <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Troubleshooting</p>
                     <h2 class="mt-2 text-2xl font-semibold text-slate-950">常见问题与排查</h2>
                     <div class="mt-5 grid gap-4 lg:grid-cols-2">
